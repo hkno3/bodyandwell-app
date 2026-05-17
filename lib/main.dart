@@ -797,24 +797,35 @@ bool _isRelatedCategory(String articleTitle, String appCategory) {
   Future<void> _loadInitialArticles() async {
     setState(() {
       _isLoading = true;
-      _currentPage = 1;
+      _currentPage = 3;
       _hasMoreData = true;
     });
-    
+
     try {
       final wordpressService = WordPressApiService();
-      final allArticles = await wordpressService.fetchLatestArticles(page: 1, perPage: 100);
-      
-      // 포함 카테고리 글 필터링
-      _articles = allArticles.where((article) => 
+      // 3페이지 병렬 요청으로 최대 300개 로드
+      final results = await Future.wait([
+        wordpressService.fetchLatestArticles(page: 1, perPage: 100),
+        wordpressService.fetchLatestArticles(page: 2, perPage: 100),
+        wordpressService.fetchLatestArticles(page: 3, perPage: 100),
+      ]);
+
+      final allArticles = results.expand((list) => list).toList();
+
+      _articles = allArticles.where((article) =>
         _isRelatedCategory(article.category, widget.categoryName)
       ).toList();
-      
-      print('${widget.categoryName}: ${_articles.length}개 글 로드 완료');
+
+      print('${widget.categoryName}: ${_articles.length}개 글 로드 완료 (전체 ${allArticles.length}개 중)');
+
+      // 글이 적어서 화면을 못 채울 경우 추가 로드
+      if (_articles.length < 5 && _hasMoreData) {
+        await _loadMoreArticles();
+      }
     } catch (e) {
       print('카테고리 글 로드 오류: $e');
     }
-    
+
     setState(() {
       _isLoading = false;
     });
@@ -835,21 +846,24 @@ bool _isRelatedCategory(String articleTitle, String appCategory) {
       );
       
       if (allArticles.isNotEmpty) {
-        // 해당 카테고리 글만 필터링해서 추가
-        final newCategoryArticles = allArticles.where((article) => 
+        final newCategoryArticles = allArticles.where((article) =>
           _isRelatedCategory(article.category, widget.categoryName)
         ).toList();
-        
+
+        setState(() {
+          _articles.addAll(newCategoryArticles);
+          _currentPage++;
+        });
+
         if (newCategoryArticles.isNotEmpty) {
-          setState(() {
-            _articles.addAll(newCategoryArticles);
-            _currentPage++;
-          });
           print('${widget.categoryName}: ${newCategoryArticles.length}개 글 추가 로드');
         }
-        
+
         if (allArticles.length < 50) {
           _hasMoreData = false;
+        } else if (_articles.length < 5) {
+          // 화면을 채우기 부족하면 자동으로 한 번 더 로드
+          await _loadMoreArticles();
         }
       } else {
         _hasMoreData = false;
