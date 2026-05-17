@@ -347,447 +347,174 @@ class _CategoryDetailScreenState extends State<CategoryDetailScreen> {
     super.dispose();
   }
 
-// 메인 앱에서 수정할 부분들
+// 제목 + 요약 기반 키워드 매칭 (오매칭 방지를 위해 구체적 의학 용어 사용)
+bool _isRelatedCategory(String articleTitle, String articleSummary, String appCategory) {
+  String lowerText = (articleTitle + ' ' + articleSummary).toLowerCase();
 
-// 확장된 _isRelatedCategory 메서드 - 제목 기반 키워드 매칭
-bool _isRelatedCategory(String articleTitle, String appCategory) {
-  String lowerTitle = articleTitle.toLowerCase();
-  
+  bool has(String keyword) => lowerText.contains(keyword);
+
   switch (appCategory) {
     case '귀':
-      return lowerTitle.contains('귀') || 
-             lowerTitle.contains('청력') || 
-             lowerTitle.contains('이명') ||
-             lowerTitle.contains('중이염') ||
-             lowerTitle.contains('외이염') ||
-             lowerTitle.contains('내이염') ||
-             lowerTitle.contains('귀에서') ||
-             lowerTitle.contains('귀앓이') ||
-             lowerTitle.contains('고막') ||
-             lowerTitle.contains('귀지') ||
-             lowerTitle.contains('귀울림') ||
-             lowerTitle.contains('난청') ||
-             lowerTitle.contains('청각') ||
-             lowerTitle.contains('삐소리') ||
-             lowerTitle.contains('삐 소리') ||
-             lowerTitle.contains('돌발성난청') ||
-             lowerTitle.contains('소음성난청') ||
-             lowerTitle.contains('평형감각') ||
-             lowerTitle.contains('어지럼증') ||
-             lowerTitle.contains('현기증');
+      return has('이명') || has('난청') || has('중이염') || has('외이염') ||
+             has('고막') || has('청력') || has('청각') || has('귀울림') ||
+             has('돌발성난청') || has('소음성난청') || has('이석증') ||
+             has('전정신경염') || has('메니에르') || has('삼출성중이염') ||
+             has('귀통증') || has('청신경') || has('이관') || has('어지럼증') ||
+             has('현기증') || has('귀지') || has('귀앓이') || has('귀에서');
 
     case '눈':
-      return lowerTitle.contains('눈') || 
-             lowerTitle.contains('시력') || 
-             lowerTitle.contains('백내장') ||
-             lowerTitle.contains('녹내장') ||
-             lowerTitle.contains('망막') ||
-             lowerTitle.contains('안구') ||
-             lowerTitle.contains('결막염') ||
-             lowerTitle.contains('다래끼') ||
-             lowerTitle.contains('근시') ||
-             lowerTitle.contains('원시') ||
-             lowerTitle.contains('난시') ||
-             lowerTitle.contains('약시') ||
-             lowerTitle.contains('사시') ||
-             lowerTitle.contains('안구건조') ||
-             lowerTitle.contains('각막') ||
-             lowerTitle.contains('동공') ||
-             lowerTitle.contains('홍채') ||
-             lowerTitle.contains('시야') ||
-             lowerTitle.contains('눈꺼풀') ||
-             lowerTitle.contains('안검') ||
-             lowerTitle.contains('눈물') ||
-             lowerTitle.contains('시신경');
+      return has('시력') || has('백내장') || has('녹내장') || has('망막') ||
+             has('안구') || has('결막염') || has('다래끼') || has('근시') ||
+             has('원시') || has('난시') || has('약시') || has('사시') ||
+             has('안구건조') || has('각막') || has('시야') || has('눈꺼풀') ||
+             has('안검') || has('눈물') || has('시신경') || has('황반변성') ||
+             has('망막박리') || has('안압') || has('눈떨림') || has('각막염') ||
+             has('포도막염') || has('비문증') || has('안와') || has('눈충혈') ||
+             has('눈통증') || has('눈피로') || has('눈건조');
 
     case '머리/뇌':
-      return lowerTitle.contains('머리') || 
-             lowerTitle.contains('뇌') || 
-             lowerTitle.contains('두통') ||
-             lowerTitle.contains('편두통') ||
-             lowerTitle.contains('치매') ||
-             lowerTitle.contains('뇌졸중') ||
-             lowerTitle.contains('알츠하이머') ||
-             lowerTitle.contains('파킨슨') ||
-             lowerTitle.contains('뇌경색') ||
-             lowerTitle.contains('뇌출혈') ||
-             lowerTitle.contains('뇌종양') ||
-             lowerTitle.contains('뇌암') ||
-             lowerTitle.contains('수막염') ||
-             lowerTitle.contains('뇌염') ||
-             lowerTitle.contains('간질') ||
-             lowerTitle.contains('발작') ||
-             lowerTitle.contains('기억력') ||
-             lowerTitle.contains('건망증') ||
-             lowerTitle.contains('집중력') ||
-             lowerTitle.contains('두개골') ||
-             lowerTitle.contains('정수리') ||
-             lowerTitle.contains('이마');
+      return has('두통') || has('편두통') || has('치매') || has('뇌졸중') ||
+             has('알츠하이머') || has('파킨슨') || has('뇌경색') || has('뇌출혈') ||
+             has('뇌종양') || has('뇌암') || has('수막염') || has('뇌염') ||
+             has('간질') || has('뇌전증') || has('발작') || has('기억력') ||
+             has('건망증') || has('집중력') || has('뇌압') || has('두개골') ||
+             has('뇌혈관') || has('뇌신경') || has('뇌척수') || has('뇌막') ||
+             has('뇌피질') || has('머리통증') || has('머리아픔') || has('두개내압');
 
     case '심장/혈관':
-      return lowerTitle.contains('심장') || 
-             lowerTitle.contains('혈관') || 
-             lowerTitle.contains('고혈압') ||
-             lowerTitle.contains('혈압') ||
-             lowerTitle.contains('심혈관') ||
-             lowerTitle.contains('심근경색') ||
-             lowerTitle.contains('협심증') ||
-             lowerTitle.contains('부정맥') ||
-             lowerTitle.contains('심부전') ||
-             lowerTitle.contains('심장병') ||
-             lowerTitle.contains('심박수') ||
-             lowerTitle.contains('맥박') ||
-             lowerTitle.contains('혈류') ||
-             lowerTitle.contains('혈액순환') ||
-             lowerTitle.contains('동맥') ||
-             lowerTitle.contains('정맥') ||
-             lowerTitle.contains('혈전') ||
-             lowerTitle.contains('빈혈') ||
-             lowerTitle.contains('관상동맥') ||
-             lowerTitle.contains('대동맥') ||
-             lowerTitle.contains('정맥류') ||
-             lowerTitle.contains('동맥경화');
+      return has('심장') || has('혈관') || has('고혈압') || has('혈압') ||
+             has('심혈관') || has('심근경색') || has('협심증') || has('부정맥') ||
+             has('심부전') || has('심장병') || has('심박수') || has('맥박') ||
+             has('혈류') || has('혈액순환') || has('동맥') || has('정맥') ||
+             has('혈전') || has('빈혈') || has('관상동맥') || has('대동맥') ||
+             has('동맥경화') || has('심방세동') || has('심실') || has('판막') ||
+             has('심내막염') || has('심낭염') || has('말초혈관') || has('하지정맥류') ||
+             has('혈액점도') || has('저혈압') || has('콜레스테롤') || has('중성지방');
 
     case '폐/호흡기':
-      return lowerTitle.contains('폐') || 
-             lowerTitle.contains('호흡') || 
-             lowerTitle.contains('기관지') ||
-             lowerTitle.contains('천식') ||
-             lowerTitle.contains('기침') ||
-             lowerTitle.contains('가래') ||
-             lowerTitle.contains('폐렴') ||
-             lowerTitle.contains('폐암') ||
-             lowerTitle.contains('폐결핵') ||
-             lowerTitle.contains('결핵') ||
-             lowerTitle.contains('기흉') ||
-             lowerTitle.contains('폐부종') ||
-             lowerTitle.contains('폐기종') ||
-             lowerTitle.contains('copd') ||
-             lowerTitle.contains('호흡곤란') ||
-             lowerTitle.contains('숨가쁨') ||
-             lowerTitle.contains('기도') ||
-             lowerTitle.contains('폐포') ||
-             lowerTitle.contains('흉막') ||
-             lowerTitle.contains('흉부') ||
-             lowerTitle.contains('가슴') ||
-             lowerTitle.contains('감기') ||
-             lowerTitle.contains('독감');
+      return has('폐렴') || has('폐암') || has('폐결핵') || has('결핵') ||
+             has('기관지') || has('천식') || has('기침') || has('가래') ||
+             has('기흉') || has('폐부종') || has('폐기종') || has('copd') ||
+             has('호흡곤란') || has('숨가쁨') || has('흉막') || has('흉부') ||
+             has('감기') || has('독감') || has('인플루엔자') || has('폐섬유화') ||
+             has('기관지확장증') || has('기관지염') || has('흉통') || has('객혈') ||
+             has('호흡기') || has('산소포화도') || has('폐기능') || has('흉수');
 
     case '위/소화기':
-      return lowerTitle.contains('위') || 
-             lowerTitle.contains('소화') || 
-             lowerTitle.contains('장') ||
-             lowerTitle.contains('식도') ||
-             lowerTitle.contains('십이지장') ||
-             lowerTitle.contains('위염') ||
-             lowerTitle.contains('위궤양') ||
-             lowerTitle.contains('위암') ||
-             lowerTitle.contains('대장') ||
-             lowerTitle.contains('소장') ||
-             lowerTitle.contains('직장') ||
-             lowerTitle.contains('항문') ||
-             lowerTitle.contains('대장염') ||
-             lowerTitle.contains('과민성대장') ||
-             lowerTitle.contains('변비') ||
-             lowerTitle.contains('설사') ||
-             lowerTitle.contains('복통') ||
-             lowerTitle.contains('복부') ||
-             lowerTitle.contains('배') ||
-             lowerTitle.contains('소화불량') ||
-             lowerTitle.contains('위산') ||
-             lowerTitle.contains('역류') ||
-             lowerTitle.contains('치질') ||
-             lowerTitle.contains('대장암') ||
-             lowerTitle.contains('헬리코박터');
+      return has('위염') || has('위궤양') || has('위암') || has('위산') ||
+             has('소화불량') || has('역류성식도염') || has('식도염') || has('식도암') ||
+             has('십이지장') || has('대장염') || has('대장암') || has('대장내시경') ||
+             has('과민성장증후군') || has('크론병') || has('변비') || has('설사') ||
+             has('복통') || has('복부팽만') || has('헬리코박터') || has('위내시경') ||
+             has('소화기') || has('치질') || has('항문') || has('직장암') ||
+             has('장염') || has('구토') || has('메스꺼움') || has('위장') ||
+             has('소화') || has('과민성대장') || has('궤양성대장염');
 
     case '간/췌장':
-      return lowerTitle.contains('간') || 
-             lowerTitle.contains('췌장') || 
-             lowerTitle.contains('담낭') ||
-             lowerTitle.contains('담석') ||
-             lowerTitle.contains('당뇨') ||
-             lowerTitle.contains('간염') ||
-             lowerTitle.contains('간경화') ||
-             lowerTitle.contains('간암') ||
-             lowerTitle.contains('지방간') ||
-             lowerTitle.contains('간기능') ||
-             lowerTitle.contains('췌장염') ||
-             lowerTitle.contains('췌장암') ||
-             lowerTitle.contains('당뇨병') ||
-             lowerTitle.contains('혈당') ||
-             lowerTitle.contains('인슐린') ||
-             lowerTitle.contains('담즙') ||
-             lowerTitle.contains('담관') ||
-             lowerTitle.contains('황달') ||
-             lowerTitle.contains('간수치') ||
-             lowerTitle.contains('b형간염') ||
-             lowerTitle.contains('c형간염') ||
-             lowerTitle.contains('a형간염');
+      return has('간염') || has('간경화') || has('간경변') || has('간암') ||
+             has('지방간') || has('간수치') || has('간기능') || has('간독성') ||
+             has('b형간염') || has('c형간염') || has('a형간염') || has('알코올성간') ||
+             has('췌장염') || has('췌장암') || has('당뇨병') || has('혈당') ||
+             has('인슐린') || has('담석') || has('담낭염') || has('황달') ||
+             has('담관') || has('담즙') || has('당화혈색소') || has('공복혈당') ||
+             has('인슐린저항성') || has('당뇨합병증') || has('췌장') || has('담낭');
 
     case '신장/비뇨기':
-      return lowerTitle.contains('신장') || 
-             lowerTitle.contains('콩팥') || 
-             lowerTitle.contains('방광') ||
-             lowerTitle.contains('소변') ||
-             lowerTitle.contains('요로') ||
-             lowerTitle.contains('전립선') ||
-             lowerTitle.contains('요실금') ||
-             lowerTitle.contains('빈뇨') ||
-             lowerTitle.contains('혈뇨') ||
-             lowerTitle.contains('신부전') ||
-             lowerTitle.contains('신장염') ||
-             lowerTitle.contains('방광염') ||
-             lowerTitle.contains('요로결석') ||
-             lowerTitle.contains('신장결석') ||
-             lowerTitle.contains('단백뇨') ||
-             lowerTitle.contains('투석') ||
-             lowerTitle.contains('크레아티닌') ||
-             lowerTitle.contains('요관') ||
-             lowerTitle.contains('요도') ||
-             lowerTitle.contains('배뇨') ||
-             lowerTitle.contains('야뇨');
+      return has('신장') || has('콩팥') || has('방광') || has('소변') ||
+             has('요로') || has('전립선') || has('요실금') || has('빈뇨') ||
+             has('혈뇨') || has('신부전') || has('신장염') || has('방광염') ||
+             has('요로결석') || has('신장결석') || has('단백뇨') || has('투석') ||
+             has('크레아티닌') || has('요관') || has('요도') || has('배뇨') ||
+             has('야뇨') || has('잔뇨') || has('야간뇨') || has('전립선비대') ||
+             has('전립선염') || has('방광결석') || has('만성신장병') || has('신장이식') ||
+             has('과민성방광') || has('배뇨장애') || has('신우신염');
 
     case '피부':
-      return lowerTitle.contains('피부') || 
-             lowerTitle.contains('아토피') || 
-             lowerTitle.contains('습진') ||
-             lowerTitle.contains('여드름') ||
-             lowerTitle.contains('알레르기') ||
-             lowerTitle.contains('가려움') ||
-             lowerTitle.contains('무좀') ||
-             lowerTitle.contains('건선') ||
-             lowerTitle.contains('두드러기') ||
-             lowerTitle.contains('피부염') ||
-             lowerTitle.contains('백반증') ||
-             lowerTitle.contains('기미') ||
-             lowerTitle.contains('주근깨') ||
-             lowerTitle.contains('점') ||
-             lowerTitle.contains('사마귀') ||
-             lowerTitle.contains('백선') ||
-             lowerTitle.contains('피부암') ||
-             lowerTitle.contains('흑색종') ||
-             lowerTitle.contains('화상') ||
-             lowerTitle.contains('상처') ||
-             lowerTitle.contains('흉터') ||
-             lowerTitle.contains('탈모') ||
-             lowerTitle.contains('손톱') ||
-             lowerTitle.contains('발톱') ||
-             lowerTitle.contains('피부건조');
+      return has('피부') || has('아토피') || has('습진') || has('여드름') ||
+             has('알레르기') || has('가려움') || has('무좀') || has('건선') ||
+             has('두드러기') || has('피부염') || has('백반증') || has('기미') ||
+             has('주근깨') || has('사마귀') || has('피부암') || has('흑색종') ||
+             has('화상') || has('흉터') || has('탈모') || has('손톱') ||
+             has('발톱') || has('피부건조') || has('지루성피부염') || has('모공') ||
+             has('색소침착') || has('피부노화') || has('대상포진') || has('수두') ||
+             has('켈로이드') || has('두피') || has('원형탈모') || has('지성피부');
 
     case '근육/관절':
-      return lowerTitle.contains('근육') || 
-             lowerTitle.contains('관절') || 
-             lowerTitle.contains('뼈') ||
-             lowerTitle.contains('척추') ||
-             lowerTitle.contains('허리') ||
-             lowerTitle.contains('디스크') ||
-             lowerTitle.contains('관절염') ||
-             lowerTitle.contains('골다공증') ||
-             lowerTitle.contains('류마티스') ||
-             lowerTitle.contains('통풍') ||
-             lowerTitle.contains('골관절염') ||
-             lowerTitle.contains('퇴행성관절염') ||
-             lowerTitle.contains('추간판') ||
-             lowerTitle.contains('골절') ||
-             lowerTitle.contains('근육통') ||
-             lowerTitle.contains('근염') ||
-             lowerTitle.contains('건염') ||
-             lowerTitle.contains('인대') ||
-             lowerTitle.contains('힘줄') ||
-             lowerTitle.contains('연골') ||
-             lowerTitle.contains('요통') ||
-             lowerTitle.contains('목디스크') ||
-             lowerTitle.contains('허리디스크') ||
-             lowerTitle.contains('섬유근육통');
+      return has('근육') || has('관절') || has('척추') || has('허리') ||
+             has('디스크') || has('관절염') || has('골다공증') || has('류마티스') ||
+             has('통풍') || has('골관절염') || has('퇴행성관절염') || has('추간판') ||
+             has('골절') || has('근육통') || has('건염') || has('인대') ||
+             has('힘줄') || has('연골') || has('요통') || has('목디스크') ||
+             has('허리디스크') || has('섬유근육통') || has('근염') || has('회전근개') ||
+             has('반월상연골') || has('슬개골') || has('관절액') || has('연골연화증') ||
+             has('척추측만') || has('척추관협착') || has('뼈') || has('골밀도');
 
     case '손/팔':
-      return lowerTitle.contains('손') || 
-             lowerTitle.contains('팔') || 
-             lowerTitle.contains('어깨') ||
-             lowerTitle.contains('팔꿈치') ||
-             lowerTitle.contains('손목') ||
-             lowerTitle.contains('손가락') ||
-             lowerTitle.contains('오십견') ||
-             lowerTitle.contains('테니스엘보') ||
-             lowerTitle.contains('손저림') ||
-             lowerTitle.contains('팔저림') ||
-             lowerTitle.contains('엄지') ||
-             lowerTitle.contains('검지') ||
-             lowerTitle.contains('중지') ||
-             lowerTitle.contains('약지') ||
-             lowerTitle.contains('새끼손가락') ||
-             lowerTitle.contains('손바닥') ||
-             lowerTitle.contains('손등') ||
-             lowerTitle.contains('상완') ||
-             lowerTitle.contains('전완') ||
-             lowerTitle.contains('어깨관절') ||
-             lowerTitle.contains('골프엘보') ||
-             lowerTitle.contains('수근관증후군') ||
-             lowerTitle.contains('방아쇠수지');
+      return has('손목') || has('손가락') || has('손저림') || has('손떨림') ||
+             has('팔꿈치') || has('팔저림') || has('어깨통증') || has('오십견') ||
+             has('회전근개') || has('테니스엘보') || has('골프엘보') || has('수근관') ||
+             has('방아쇠수지') || has('손목터널') || has('드퀘르벵') || has('손바닥') ||
+             has('손등') || has('상완') || has('전완') || has('어깨관절') ||
+             has('어깨충돌') || has('이두근') || has('삼두근') || has('손麻痺') ||
+             has('손목골절') || has('쇄골') || has('견갑골') || has('팔골절');
 
     case '다리/발':
-      return lowerTitle.contains('다리') || 
-             lowerTitle.contains('발') || 
-             lowerTitle.contains('무릎') ||
-             lowerTitle.contains('발목') ||
-             lowerTitle.contains('종아리') ||
-             lowerTitle.contains('발가락') ||
-             lowerTitle.contains('발뒤꿈치') ||
-             lowerTitle.contains('하지정맥류') ||
-             lowerTitle.contains('족저근막') ||
-             lowerTitle.contains('발바닥') ||
-             lowerTitle.contains('발등') ||
-             lowerTitle.contains('허벅지') ||
-             lowerTitle.contains('대퇴') ||
-             lowerTitle.contains('하퇴') ||
-             lowerTitle.contains('정강이') ||
-             lowerTitle.contains('무릎관절') ||
-             lowerTitle.contains('아킬레스건') ||
-             lowerTitle.contains('발목염좌') ||
-             lowerTitle.contains('무릎연골') ||
-             lowerTitle.contains('십자인대') ||
-             lowerTitle.contains('다리부종') ||
-             lowerTitle.contains('무지외반증') ||
-             lowerTitle.contains('편평족') ||
-             lowerTitle.contains('굳은살');
+      return has('무릎') || has('발목') || has('종아리') || has('발가락') ||
+             has('발뒤꿈치') || has('하지정맥류') || has('족저근막') || has('발바닥') ||
+             has('허벅지') || has('대퇴') || has('정강이') || has('아킬레스건') ||
+             has('발목염좌') || has('무릎연골') || has('십자인대') || has('다리부종') ||
+             has('무지외반증') || has('편평족') || has('무릎통증') || has('족부') ||
+             has('하지부종') || has('반월판') || has('슬개골') || has('발저림') ||
+             has('발통증') || has('다리저림') || has('하지') || has('무릎관절');
 
     case '코/입':
-      return lowerTitle.contains('코') || 
-             lowerTitle.contains('입') || 
-             lowerTitle.contains('비염') ||
-             lowerTitle.contains('축농증') ||
-             lowerTitle.contains('구내염') ||
-             lowerTitle.contains('치아') ||
-             lowerTitle.contains('잇몸') ||
-             lowerTitle.contains('구취') ||
-             lowerTitle.contains('콧물') ||
-             lowerTitle.contains('코막힘') ||
-             lowerTitle.contains('후각') ||
-             lowerTitle.contains('냄새') ||
-             lowerTitle.contains('코피') ||
-             lowerTitle.contains('부비동') ||
-             lowerTitle.contains('구강') ||
-             lowerTitle.contains('혀') ||
-             lowerTitle.contains('치과') ||
-             lowerTitle.contains('입냄새') ||
-             lowerTitle.contains('입술') ||
-             lowerTitle.contains('구순포진') ||
-             lowerTitle.contains('침') ||
-             lowerTitle.contains('타액') ||
-             lowerTitle.contains('미각') ||
-             lowerTitle.contains('비중격');
+      return has('비염') || has('축농증') || has('구내염') || has('치아') ||
+             has('잇몸') || has('구취') || has('콧물') || has('코막힘') ||
+             has('후각') || has('코피') || has('부비동') || has('구강') ||
+             has('치과') || has('입냄새') || has('구순포진') || has('타액') ||
+             has('미각') || has('비중격') || has('구강암') || has('혀') ||
+             has('치주염') || has('충치') || has('치아교정') || has('임플란트') ||
+             has('코골이') || has('수면무호흡') || has('구강건조') || has('편평태선');
 
     case '목/인후':
-      return lowerTitle.contains('목') || 
-             lowerTitle.contains('인후') || 
-             lowerTitle.contains('편도') ||
-             lowerTitle.contains('성대') ||
-             lowerTitle.contains('갑상선') ||
-             lowerTitle.contains('목소리') ||
-             lowerTitle.contains('인후염') ||
-             lowerTitle.contains('편도염') ||
-             lowerTitle.contains('목감기') ||
-             lowerTitle.contains('후두') ||
-             lowerTitle.contains('쉰소리') ||
-             lowerTitle.contains('음성') ||
-             lowerTitle.contains('삼키기') ||
-             lowerTitle.contains('목구멍') ||
-             lowerTitle.contains('인두') ||
-             lowerTitle.contains('편도선') ||
-             lowerTitle.contains('갑상샘') ||
-             lowerTitle.contains('림프절') ||
-             lowerTitle.contains('임파선') ||
-             lowerTitle.contains('경추') ||
-             lowerTitle.contains('목뼈') ||
-             lowerTitle.contains('목어깨');
+      return has('인후염') || has('편도염') || has('편도') || has('성대') ||
+             has('갑상선') || has('갑상샘') || has('인후') || has('후두') ||
+             has('인두') || has('편도선') || has('림프절') || has('임파선') ||
+             has('경추') || has('목디스크') || has('목통증') || has('목쉼') ||
+             has('연하곤란') || has('삼킴장애') || has('목소리') || has('쉰소리') ||
+             has('음성') || has('갑상선암') || has('갑상선염') || has('갑상선기능') ||
+             has('목뻣뻣') || has('목뻐근') || has('목어깨') || has('인후통');
 
     case '여성건강':
-      return lowerTitle.contains('여성') || 
-             lowerTitle.contains('생리') || 
-             lowerTitle.contains('임신') ||
-             lowerTitle.contains('갱년기') ||
-             lowerTitle.contains('유방') ||
-             lowerTitle.contains('자궁') ||
-             lowerTitle.contains('난소') ||
-             lowerTitle.contains('폐경') ||
-             lowerTitle.contains('월경') ||
-             lowerTitle.contains('생리통') ||
-             lowerTitle.contains('생리불순') ||
-             lowerTitle.contains('무월경') ||
-             lowerTitle.contains('과다월경') ||
-             lowerTitle.contains('자궁근종') ||
-             lowerTitle.contains('자궁내막증') ||
-             lowerTitle.contains('자궁암') ||
-             lowerTitle.contains('자궁경부암') ||
-             lowerTitle.contains('난소암') ||
-             lowerTitle.contains('유방암') ||
-             lowerTitle.contains('모유') ||
-             lowerTitle.contains('수유') ||
-             lowerTitle.contains('출산') ||
-             lowerTitle.contains('분만') ||
-             lowerTitle.contains('산후') ||
-             lowerTitle.contains('질염') ||
-             lowerTitle.contains('골반') ||
-             lowerTitle.contains('피임') ||
-             lowerTitle.contains('불임') ||
-             lowerTitle.contains('산부인과');
+      return has('생리') || has('임신') || has('갱년기') || has('유방') ||
+             has('자궁') || has('난소') || has('폐경') || has('월경') ||
+             has('생리통') || has('생리불순') || has('무월경') || has('과다월경') ||
+             has('자궁근종') || has('자궁내막증') || has('자궁암') || has('자궁경부암') ||
+             has('난소암') || has('유방암') || has('모유') || has('수유') ||
+             has('출산') || has('분만') || has('산후') || has('질염') ||
+             has('골반') || has('피임') || has('불임') || has('산부인과') ||
+             has('유방결절') || has('난소낭종') || has('자궁선근증') || has('조기폐경') ||
+             has('임신성당뇨') || has('산후우울') || has('여성호르몬') || has('에스트로겐');
 
     case '남성건강':
-      return lowerTitle.contains('남성') || 
-             lowerTitle.contains('전립선') || 
-             lowerTitle.contains('발기') ||
-             lowerTitle.contains('정력') ||
-             lowerTitle.contains('남성호르몬') ||
-             lowerTitle.contains('테스토스테론') ||
-             lowerTitle.contains('조루') ||
-             lowerTitle.contains('전립선염') ||
-             lowerTitle.contains('전립선비대') ||
-             lowerTitle.contains('전립선암') ||
-             lowerTitle.contains('발기부전') ||
-             lowerTitle.contains('성기능') ||
-             lowerTitle.contains('성욕') ||
-             lowerTitle.contains('정자') ||
-             lowerTitle.contains('정액') ||
-             lowerTitle.contains('고환') ||
-             lowerTitle.contains('음낭') ||
-             lowerTitle.contains('음경') ||
-             lowerTitle.contains('포경') ||
-             lowerTitle.contains('남성불임') ||
-             lowerTitle.contains('정계정맥류') ||
-             lowerTitle.contains('비뇨기과') ||
-             lowerTitle.contains('남성갱년기');
+      return has('전립선') || has('발기부전') || has('발기') || has('조루') ||
+             has('남성호르몬') || has('테스토스테론') || has('전립선염') ||
+             has('전립선비대') || has('전립선암') || has('성기능') || has('정자') ||
+             has('정액') || has('고환') || has('음낭') || has('음경') ||
+             has('포경') || has('남성불임') || has('정계정맥류') || has('남성갱년기') ||
+             has('성욕') || has('정력') || has('남성건강') || has('비뇨기과') ||
+             has('psa') || has('전립선특이항원') || has('조기사정');
 
     case '전신/기타':
-      return lowerTitle.contains('건강') || 
-             lowerTitle.contains('운동') || 
-             lowerTitle.contains('영양') ||
-             lowerTitle.contains('비타민') ||
-             lowerTitle.contains('다이어트') ||
-             lowerTitle.contains('체중') ||
-             lowerTitle.contains('스트레스') ||
-             lowerTitle.contains('면역') ||
-             lowerTitle.contains('피로') ||
-             lowerTitle.contains('수면') ||
-             lowerTitle.contains('불면') ||
-             lowerTitle.contains('비만') ||
-             lowerTitle.contains('미네랄') ||
-             lowerTitle.contains('면역력') ||
-             lowerTitle.contains('감염') ||
-             lowerTitle.contains('바이러스') ||
-             lowerTitle.contains('세균') ||
-             lowerTitle.contains('발열') ||
-             lowerTitle.contains('열') ||
-             lowerTitle.contains('오한') ||
-             lowerTitle.contains('우울') ||
-             lowerTitle.contains('불안') ||
-             lowerTitle.contains('호르몬') ||
-             lowerTitle.contains('내분비') ||
-             lowerTitle.contains('암') ||
-             lowerTitle.contains('종양') ||
-             lowerTitle.contains('건강검진') ||
-             lowerTitle.contains('검사') ||
-             lowerTitle.contains('치료') ||
-             lowerTitle.contains('의료');
+      return has('건강검진') || has('면역력') || has('면역') || has('비타민') ||
+             has('영양') || has('영양제') || has('다이어트') || has('체중') ||
+             has('비만') || has('스트레스') || has('피로') || has('만성피로') ||
+             has('수면') || has('불면') || has('수면장애') || has('운동') ||
+             has('미네랄') || has('호르몬') || has('내분비') || has('바이러스') ||
+             has('감염') || has('세균') || has('발열') || has('오한') ||
+             has('우울') || has('불안') || has('공황') || has('정신건강') ||
+             has('건강') || has('종합건강') || has('검진') || has('혈액검사') ||
+             has('콜레스테롤') || has('중성지방') || has('혈액') || has('노화');
 
     default:
       return false;
@@ -813,7 +540,7 @@ bool _isRelatedCategory(String articleTitle, String appCategory) {
       final allArticles = results.expand((list) => list).toList();
 
       _articles = allArticles.where((article) =>
-        _isRelatedCategory(article.category, widget.categoryName)
+        _isRelatedCategory(article.category, article.summary, widget.categoryName)
       ).toList();
 
       print('${widget.categoryName}: ${_articles.length}개 글 로드 완료 (전체 ${allArticles.length}개 중)');
@@ -841,7 +568,7 @@ bool _isRelatedCategory(String articleTitle, String appCategory) {
 
       if (allArticles.isNotEmpty) {
         final newCategoryArticles = allArticles.where((article) =>
-          _isRelatedCategory(article.category, widget.categoryName)
+          _isRelatedCategory(article.category, article.summary, widget.categoryName)
         ).toList();
 
         setState(() {
