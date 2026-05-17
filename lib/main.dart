@@ -818,9 +818,9 @@ bool _isRelatedCategory(String articleTitle, String appCategory) {
 
       print('${widget.categoryName}: ${_articles.length}개 글 로드 완료 (전체 ${allArticles.length}개 중)');
 
-      // 글이 적어서 화면을 못 채울 경우 추가 로드
-      if (_articles.length < 5 && _hasMoreData) {
-        await _loadMoreArticles();
+      // 글이 적어 화면을 못 채우면 글이 5개 이상 되거나 데이터가 없을 때까지 계속 로드
+      while (_articles.length < 5 && _hasMoreData) {
+        await _fetchNextPage();
       }
     } catch (e) {
       print('카테고리 글 로드 오류: $e');
@@ -831,20 +831,14 @@ bool _isRelatedCategory(String articleTitle, String appCategory) {
     });
   }
 
-  Future<void> _loadMoreArticles() async {
-    if (_isLoadingMore || !_hasMoreData) return;
-    
-    setState(() {
-      _isLoadingMore = true;
-    });
-    
+  Future<void> _fetchNextPage() async {
     try {
       final wordpressService = WordPressApiService();
       final allArticles = await wordpressService.fetchLatestArticles(
-        page: _currentPage + 1, 
-        perPage: 50
+        page: _currentPage + 1,
+        perPage: 100,
       );
-      
+
       if (allArticles.isNotEmpty) {
         final newCategoryArticles = allArticles.where((article) =>
           _isRelatedCategory(article.category, widget.categoryName)
@@ -856,14 +850,11 @@ bool _isRelatedCategory(String articleTitle, String appCategory) {
         });
 
         if (newCategoryArticles.isNotEmpty) {
-          print('${widget.categoryName}: ${newCategoryArticles.length}개 글 추가 로드');
+          print('${widget.categoryName}: ${newCategoryArticles.length}개 글 추가 로드 (page ${_currentPage})');
         }
 
-        if (allArticles.length < 50) {
+        if (allArticles.length < 100) {
           _hasMoreData = false;
-        } else if (_articles.length < 5) {
-          // 화면을 채우기 부족하면 자동으로 한 번 더 로드
-          await _loadMoreArticles();
         }
       } else {
         _hasMoreData = false;
@@ -871,7 +862,21 @@ bool _isRelatedCategory(String articleTitle, String appCategory) {
     } catch (e) {
       print('추가 글 로드 오류: $e');
     }
-    
+  }
+
+  Future<void> _loadMoreArticles() async {
+    if (_isLoadingMore || !_hasMoreData) return;
+
+    setState(() {
+      _isLoadingMore = true;
+    });
+
+    try {
+      await _fetchNextPage();
+    } catch (e) {
+      print('추가 글 로드 오류: $e');
+    }
+
     setState(() {
       _isLoadingMore = false;
     });
